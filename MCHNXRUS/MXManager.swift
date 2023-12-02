@@ -23,6 +23,7 @@ struct MyUser{
     var phoneNumber: String?
     var imageURL: URL?
     var userLocation: CLLocation?
+    var userType: Int?
     
 }
 
@@ -33,6 +34,8 @@ class MXManager: NSObject, ObservableObject {
     @Published var signUpScreen = false
     @Published var database = Firestore.firestore()
     @Published var curUser = MyUser()
+    @Published var backgroundColor = Color(red: 35/255, green: 42/255, blue: 47/255)
+    @Published var buttonColor = Color(red: 240/255, green: 100/255, blue: 75/255)
 
     
     func performGoogleSignin() async -> Bool {
@@ -40,7 +43,7 @@ class MXManager: NSObject, ObservableObject {
             case idTokenMissing
         }
         let signInConfig = GIDConfiguration(clientID: FirebaseApp.app()?.options.clientID ?? "")
-        let signIn = GIDSignIn.sharedInstance
+        //let signIn = GIDSignIn.sharedInstance
         GIDSignIn.sharedInstance.configuration = signInConfig
         print("After sign In config")
         
@@ -131,7 +134,7 @@ class MXManager: NSObject, ObservableObject {
                     print("Sucessfully in authUser")
                     self.curUser.email = authResult.user.email ?? ""
                     self.curUser.phoneNumber = phoneNum
-                    self.addUserFromSignUp(email: email, phoneNumber: phoneNum)
+                    //self.addUserFromSignUp(email: email, phoneNumber: phoneNum)
                 }
             }
         }
@@ -158,12 +161,14 @@ class MXManager: NSObject, ObservableObject {
         }
     }
     
-    func addUserFromSignUp(email: String, phoneNumber: String){
+    func addUserFromSignUp(email: String, phoneNumber: String, userType: Int){
+        self.curUser.userType = userType
         let userCollection = database.collection("Users")
         userCollection.getDocuments { snapshot, error in
             userCollection.addDocument(data: [
                 "email": email,
-                "phoneNumber": phoneNumber
+                "phoneNumber": phoneNumber,
+                "userType": userType
             ]){ error in
                 if let error = error {
                     print(error.localizedDescription + "Error adding user")
@@ -172,13 +177,22 @@ class MXManager: NSObject, ObservableObject {
         }
     }
     
-    func getUserFromDatabase(email: String){
+    func getUserFromDatabase(email: String) -> Bool{
         let userCollection = database.collection("Users")
+        @State var ifUser = true
         userCollection.getDocuments(){ snapshot, error in
             if let error = error{
                 print(error.localizedDescription)
+                ifUser = false
+            }
+            else if let snapshot = snapshot
+            {
+                print("User is already in databse")
+                print(snapshot.description)
+                
             }
         }
+        return ifUser
     }
     
     func getPhoneNumber(email: String){
@@ -211,8 +225,8 @@ class MXManager: NSObject, ObservableObject {
                 self.loginScreen = false
                 self.signedInScreen = true
                 self.curUser.email = authUser.user.email?.description ?? ""
-                print("inside sign in: \(authUser.user.email?.description ?? "no email from auth")")
-                print("curUser email: \(self.curUser.email?.description)")
+                //print("inside sign in: \(authUser.user.email?.description ?? "no email from auth")")
+                //print("curUser email: \(self.curUser.email?.description)")
                 if let email = self.curUser.email{
                     self.getPhoneNumber(email: email)
                 }
