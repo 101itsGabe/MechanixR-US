@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var mxManager: MXManager
+    @StateObject var uvManager: UVManager
     var body: some View {
         ZStack{
             Color.white
@@ -17,7 +18,7 @@ struct ContentView: View {
                 SignInView(mxManager: mxManager)
             }
             else if (mxManager.signedInScreen){
-                UserScreen(mxManager: mxManager)
+                UserScreen(mxManager: mxManager, uvManager: uvManager)
             }
             else if(mxManager.signUpScreen){
                 SignUpView(mxManager: mxManager)
@@ -28,5 +29,5 @@ struct ContentView: View {
     
 
 #Preview {
-    ContentView(mxManager: MXManager())
+    ContentView(mxManager: MXManager(), uvManager: UVManager())
 }

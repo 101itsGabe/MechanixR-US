@@ -97,18 +97,23 @@ struct SignUpView: View {
                         else{
                             passedP = true
                         }
+                        print("HELLOOOOO")
+                        print(mxManager.isInFirebase)
                         
-                        var ifUser = mxManager.getUserFromDatabase(email: email)
-                        //that means a user is returned
-                        
-                        if ifUser{
+                        await mxManager.getUserFromDatabase(email: email)
+                        print("THE EMAIL: \(email)")
+                        print("after getUser: \(mxManager.isInFirebase)")
+                        if(mxManager.isInFirebase == true){
+                            print("YES Lawd")
                             passedEFirebase = false
+                            
                         }
                         else{
+                            print("NO Lawd")
                             passedEFirebase = true
                         }
 
-                        
+                        //Shiloh@gmail.com
                         if(passedE && passedPh && passedP && passedEFirebase){
                             mxManager.addUserFromSignUp(email: email, phoneNumber: phonenum, userType: selected)
                             try await mxManager.createNewUser(email: email, password: password2, phoneNum: phonenum)
@@ -130,28 +135,24 @@ struct SignUpView: View {
                             )
                     })
                 
-                
-                if(!passedEFirebase){
+                if !passedEFirebase{
                     Text("User is already registered!")
-                        .padding()
                         .foregroundStyle(Color.red)
                         .bold()
                 }
                 
                 if(!passedE){
-                    Text("Not a valid email must contain @").padding()
+                    Text("Not a valid email must contain @")
                         .foregroundStyle(Color.red)
                         .bold()
                 }
                 if(!passedPh){
                     Text("Not a valid phone number numbers only")
-                        .padding()
                         .foregroundStyle(Color.red)
                         .bold()
                 }
                 if(!passedP){
                     Text("Passwords dont match!")
-                        .padding()
                         .foregroundStyle(Color.red)
                         .bold()
                 }

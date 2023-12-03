@@ -21,6 +21,9 @@ struct SignInView: View {
                     .bold()
                     .font(.system(size: 50))
                     .foregroundStyle(Color.white)
+                
+                Spacer()
+                
                 TextField("", text:
                             $email, prompt: Text("Email")
                     .foregroundStyle(Color.white))
@@ -91,6 +94,9 @@ struct SignInView: View {
                     
                     
                 }// end of hstack
+                
+                Spacer()
+                
                 HStack{
                     Text("Dont have an account yet?").foregroundStyle(Color.black)
                     Button(action:{

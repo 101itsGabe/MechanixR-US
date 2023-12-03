@@ -32,6 +32,9 @@
 		BA82055B2B1531130053E6ED /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BA8205582B1531130053E6ED /* GoogleService-Info.plist */; };
 		BA82055D2B15336E0053E6ED /* FirebaseDatabaseSwift in Frameworks */ = {isa = PBXBuildFile; productRef = BA82055C2B15336E0053E6ED /* FirebaseDatabaseSwift */; };
 		BA997C0F2B15774600AE1E46 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA997C0E2B15774600AE1E46 /* SignUpView.swift */; };
+		BAC27EDD2B1BCF7400918259 /* UserAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAC27EDC2B1BCF7400918259 /* UserAccountView.swift */; };
+		BAC27EDF2B1BCFD600918259 /* UserViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAC27EDE2B1BCFD600918259 /* UserViewManager.swift */; };
+		BAC27EE12B1C437C00918259 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAC27EE02B1C437C00918259 /* SearchView.swift */; };
 		BAF019D02B1917ED00108750 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = BAF019CF2B1917ED00108750 /* SDWebImage */; };
 		BAF019D22B1917ED00108750 /* SDWebImageMapKit in Frameworks */ = {isa = PBXBuildFile; productRef = BAF019D12B1917ED00108750 /* SDWebImageMapKit */; };
 		BAF019D52B19184700108750 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = BAF019D42B19184700108750 /* SDWebImageSwiftUI */; };
@@ -71,6 +74,9 @@
 		BA8205562B151C040053E6ED /* UserScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScreen.swift; sourceTree = "<group>"; };
 		BA8205582B1531130053E6ED /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BA997C0E2B15774600AE1E46 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		BAC27EDC2B1BCF7400918259 /* UserAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountView.swift; sourceTree = "<group>"; };
+		BAC27EDE2B1BCFD600918259 /* UserViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewManager.swift; sourceTree = "<group>"; };
+		BAC27EE02B1C437C00918259 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +152,9 @@
 				BA8205542B1519DB0053E6ED /* SignInView.swift */,
 				BA8205562B151C040053E6ED /* UserScreen.swift */,
 				BA997C0E2B15774600AE1E46 /* SignUpView.swift */,
+				BAC27EDC2B1BCF7400918259 /* UserAccountView.swift */,
+				BAC27EDE2B1BCFD600918259 /* UserViewManager.swift */,
+				BAC27EE02B1C437C00918259 /* SearchView.swift */,
 			);
 			path = MCHNXRUS;
 			sourceTree = "<group>";
@@ -340,7 +349,10 @@
 				BA82050B2B126FF00053E6ED /* ContentView.swift in Sources */,
 				BA8205092B126FF00053E6ED /* MCHNXRUSApp.swift in Sources */,
 				BA8205572B151C040053E6ED /* UserScreen.swift in Sources */,
+				BAC27EE12B1C437C00918259 /* SearchView.swift in Sources */,
+				BAC27EDD2B1BCF7400918259 /* UserAccountView.swift in Sources */,
 				BA997C0F2B15774600AE1E46 /* SignUpView.swift in Sources */,
+				BAC27EDF2B1BCFD600918259 /* UserViewManager.swift in Sources */,
 				BA8205332B12702F0053E6ED /* MXManager.swift in Sources */,
 				BA8205552B1519DB0053E6ED /* SignInView.swift in Sources */,
 			);

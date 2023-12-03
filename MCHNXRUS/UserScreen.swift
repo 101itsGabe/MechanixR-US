@@ -9,86 +9,46 @@ import SwiftUI
 import SDWebImageSwiftUI
 struct UserScreen: View {
     @StateObject var mxManager: MXManager
+    @StateObject var uvManager: UVManager
     var body: some View {
         ZStack{
             Color(mxManager.backgroundColor)
                 .edgesIgnoringSafeArea(.all)
             VStack{
-                /*
-                HStack{
-
-                    Image("icon2")
-                        .resizable()
-                        .scaledToFit()
-                        .padding()
-                    Spacer()
-                    Text("MCHNX R'US")
+                
+                if(uvManager.ifUserAccount){
+                    UserAccountView(mxManager: mxManager)
+                }
+                
+                else if uvManager.ifShop{
+                    Text("Shop goes here")
                         .foregroundStyle(Color.white)
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                    if(mxManager.curUser.imageURL != nil){
-                        WebImage(url: mxManager.curUser.imageURL)
-                            .scaledToFill()
-                            .frame(width: 20, height: 20)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.black, lineWidth: 10))
-                            .scaleEffect(0.5)
-                    }
-                    else
-                    {
-                        Image("default")
-                            .frame(width: 200, height: 200)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.black, lineWidth: 10))
-                            .scaleEffect(0.3)
-                    }
                 }
-                /*
-                Spacer()
-                Image("theOne")
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(0.8)
-                 */
-                 */
-                Spacer()
-                Text("User is succsefully signed in")
-                    .padding()
-                    .foregroundColor(.white)
-                    .bold()
-                if(mxManager.curUser.userType == 1)
-                {
-                    Text("UserType: Customer")
-                        .padding()
-                        .bold()
-                        .foregroundColor(.white)
+                else if uvManager.ifSearch{
+                    SearchView(mxManager: mxManager)
+                        .foregroundStyle(Color.white)
                 }
-                else{
-                    Text("UserType: Contractor")
-                        .padding()
-                        .bold()
-                        .foregroundColor(.white)
+                else if uvManager.ifRequest{
+                    Text("Request goes here")
+                        .foregroundStyle(Color.white)
                 }
-                Text(mxManager.curUser.email ?? "no email")
-                    .padding()
-                    .foregroundColor(.white)
-                    .bold()
-                Text(mxManager.curUser.phoneNumber ?? "no phone")
-                    .foregroundColor(.white)
-                    .bold()
-                Spacer()
-                GeometryReader { geometry in
-                    Rectangle()
-                        .frame(width: geometry.size.width, height: 4) // Use the width of the screen
-                        .foregroundColor(.gray) // Customize the color of the line if needed
-                        .offset(y: geometry.size.height)
+                else if uvManager.ifMessages{
+                    Text("Messages goes here")
+                        .foregroundStyle(Color.white)
                 }
+                
+                Rectangle()
+                    .frame(height: 4) // Adjust width as needed
+                    .foregroundColor(.gray)
         
                 HStack{
                     Spacer()
-                    Button(action:{}){
-                        Image(systemName: "rectangle.and.text.magnifyingglass")
+                    Button(action:{uvManager.ifUserAccount = false
+                        uvManager.ifMessages = false
+                        uvManager.ifSearch = false
+                        uvManager.ifRequest = false
+                        uvManager.ifShop = true}){
+                        Image(systemName: "cart")
                             .scaleEffect(1.8)
                             .foregroundColor(mxManager.buttonColor)
                             .padding(.leading)
@@ -98,7 +58,11 @@ struct UserScreen: View {
                     Spacer()
 
                     Spacer()
-                    Button(action:{}){
+                    Button(action:{uvManager.ifUserAccount = false
+                        uvManager.ifMessages = false
+                        uvManager.ifSearch = false
+                        uvManager.ifRequest = true
+                        uvManager.ifShop = false}){
                         Image(systemName: "wrench.adjustable")
                             .scaleEffect(1.8)
                             .foregroundColor(mxManager.buttonColor)
@@ -108,15 +72,23 @@ struct UserScreen: View {
                     Spacer()
 
                     Spacer()
-                    Button(action:{}){
-                        Image(systemName: "cart")
+                    Button(action:{uvManager.ifUserAccount = false
+                        uvManager.ifMessages = false
+                        uvManager.ifSearch = true
+                        uvManager.ifRequest = false
+                        uvManager.ifShop = false}){
+                        Image(systemName: "rectangle.and.text.magnifyingglass")
                             .scaleEffect(1.8)
                             .foregroundColor(mxManager.buttonColor)
                         .padding()}
                     Spacer()
 
                     Spacer()
-                    Button(action:{}){
+                    Button(action:{uvManager.ifUserAccount = false
+                        uvManager.ifMessages = true
+                        uvManager.ifSearch = false
+                        uvManager.ifRequest = false
+                        uvManager.ifShop = false}){
                         Image(systemName: "message")
                             .scaleEffect(1.8)
                             .foregroundColor(mxManager.buttonColor)
@@ -127,7 +99,13 @@ struct UserScreen: View {
                     Spacer()
 
                     Spacer()
-                    Button(action:{}){
+                    Button(action:{
+                        uvManager.ifUserAccount = true
+                        uvManager.ifMessages = false
+                        uvManager.ifSearch = false
+                        uvManager.ifRequest = false
+                        uvManager.ifShop = false
+                    }){
                         Image(systemName: "person.circle")
                             .scaleEffect(1.8)
                             .foregroundColor(mxManager.buttonColor)
@@ -142,5 +120,6 @@ struct UserScreen: View {
     }
 
 #Preview {
-    UserScreen(mxManager: MXManager())
+    UserScreen(mxManager: MXManager(),
+                uvManager: UVManager())
 }

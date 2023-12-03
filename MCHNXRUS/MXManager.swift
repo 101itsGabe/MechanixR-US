@@ -36,6 +36,7 @@ class MXManager: NSObject, ObservableObject {
     @Published var curUser = MyUser()
     @Published var backgroundColor = Color(red: 35/255, green: 42/255, blue: 47/255)
     @Published var buttonColor = Color(red: 240/255, green: 100/255, blue: 75/255)
+    @Published var isInFirebase = false
 
     
     func performGoogleSignin() async -> Bool {
@@ -70,8 +71,10 @@ class MXManager: NSObject, ObservableObject {
                   let firebaseUser = result.user
                 if firebaseUser != nil{
                     //curUser = firebaseUser
-                    curUser.email = firebaseUser.email ?? ""
-                    curUser.phoneNumber = firebaseUser.phoneNumber ?? ""
+                    
+                        self.curUser.email = firebaseUser.email ?? ""
+                        self.curUser.phoneNumber = firebaseUser.phoneNumber ?? ""
+
                     if let photoURL = firebaseUser.photoURL{
                         curUser.imageURL = photoURL
                     }
@@ -86,7 +89,6 @@ class MXManager: NSObject, ObservableObject {
                             if snapshot?.isEmpty ?? true {
                                 print("The collection 'Users' is empty or does not exist. AHH")
                             } else {
-                                print("The collection 'Users' exists and contains documents. AHH")
                                 // You can perform actions with the documents here
                                 userCollection.whereField("email", isEqualTo: self.curUser.email).getDocuments{ (snapshot, error) in
                                     if let error = error{
@@ -102,7 +104,13 @@ class MXManager: NSObject, ObservableObject {
                                             self.addUserToDatabase(user: firebaseUser)
                                         }
                                         else{
-                                            print("user is in database")
+                                            for document in snapshot.documents {
+                                                let data = document.data()
+                                                if let phoneNumber = data["phoneNumber"] as? String{
+                                                    self.curUser.phoneNumber = phoneNumber
+                                                }
+                                            }
+                                            
                                         }
                                     }
                                     
@@ -177,22 +185,42 @@ class MXManager: NSObject, ObservableObject {
         }
     }
     
-    func getUserFromDatabase(email: String) -> Bool{
+    @MainActor func getUserFromDatabase(email: String) async{
+        database = Firestore.firestore()
         let userCollection = database.collection("Users")
-        @State var ifUser = true
-        userCollection.getDocuments(){ snapshot, error in
-            if let error = error{
-                print(error.localizedDescription)
-                ifUser = false
-            }
-            else if let snapshot = snapshot
-            {
-                print("User is already in databse")
-                print(snapshot.description)
+        print("GETUSER")
+        do{
+            let querySnapshot = try await userCollection.whereField("email", isEqualTo: email).getDocuments()
+            
+            if !querySnapshot.isEmpty{
+                    print("User is already in databse")
+                for document in querySnapshot.documents{
+                    let data = document.data()
+                    self.isInFirebase = true
+                    print(data["email"].debugDescription)
+                    if let emailInside = data["email"] as? String{
+                        print(emailInside.description)
+                    }
+                    
+                    print(self.isInFirebase)
+                }
                 
             }
+            else{
+                    print("GetUser from database USER IS NOT IN")
+                DispatchQueue.main.async {
+                    // Update UI here
+                    self.isInFirebase = false
+                    // Or any other UI-related changes
+                }
+                    self.isInFirebase = false
+                }
         }
-        return ifUser
+            //Just return the string
+        catch{
+            print("There was an error")
+        }
+        
     }
     
     func getPhoneNumber(email: String){
@@ -234,6 +262,18 @@ class MXManager: NSObject, ObservableObject {
                 print("signIn Succsefful")
             }
         }
+    }
+    
+    func signOutUser(){
+        curUser.email = ""
+        curUser.phoneNumber = ""
+        curUser.imageURL = nil
+        curUser.userLocation = nil
+        self.loginScreen = true
+        self.signedInScreen = false
+        self.signUpScreen = false
+        self.isInFirebase = false
+        
     }
 
 }
