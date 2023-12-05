@@ -10,7 +10,15 @@ import SwiftUI
 struct SearchView: View {
     @StateObject var mxManager: MXManager
     @State var searchText = ""
-    
+    @Environment(\.colorScheme) var colorScheme
+    var isLight : Bool{
+        if colorScheme == .dark{
+            return false
+        }
+        else{
+            return true
+        }
+    }
     var searchResults: [String] {
         if searchText.isEmpty {
             return mxManager.helpOptions
@@ -32,19 +40,30 @@ struct SearchView: View {
                         ForEach(searchResults, id: \.self){ name in
                             NavigationLink{
                                 Text(name)
-                                    .foregroundStyle(Color.white)
+                                    .backgroundStyle(mxManager.backgroundColor)
+                                    .foregroundStyle(Color.black)
                             }
                         label:{
-                            Text(name)
+                            if(isLight){
+                                Text(name)
+                                    .foregroundStyle(Color(.black))
+                            }
+                            else{
+                                Text(name)
+                                    .foregroundStyle(Color(.white))
+                            }
                         }
+                        .foregroundStyle(mxManager.backgroundColor)
+                        .backgroundStyle(mxManager.backgroundColor)
                             
                             
-                        }
+                        }.foregroundStyle(Color.black)
                     }
                     .navigationTitle("Problems")
-                    .foregroundStyle(Color.black)
+                    .background(mxManager.backgroundColor)
                 }
             }.searchable(text: $searchText, prompt: "Search")
+                .background(mxManager.backgroundColor)
                 .foregroundStyle(Color.white)
                 .scrollContentBackground(.hidden)
                 .toolbarBackground(

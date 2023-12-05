@@ -27,11 +27,12 @@ struct MyUser{
     
 }
 
-class MXManager: NSObject, ObservableObject {
+class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var helpOptions = ["Suspensions", "Brakes", "Engine", "Chassi", "Interior", "Lights", "Electronics","Audio"]
     @Published var loginScreen = true
     @Published var signedInScreen = false
     @Published var signUpScreen = false
+    @Published var requestScreen = false
     @Published var database = Firestore.firestore()
     @Published var curUser = MyUser()
     @Published var backgroundColor = Color(red: 35/255, green: 42/255, blue: 47/255)
@@ -275,6 +276,5 @@ class MXManager: NSObject, ObservableObject {
         self.isInFirebase = false
         
     }
-
 }
 

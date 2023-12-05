@@ -26,7 +26,7 @@ struct MCHNXRUSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
         WindowGroup {
-            ContentView(mxManager: MXManager(), uvManager: UVManager())
+            ContentView(mxManager: MXManager(), uvManager: UVManager(), mapManager: MapManager())
         }
     }
 }

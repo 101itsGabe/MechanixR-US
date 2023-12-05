@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 struct UserScreen: View {
     @StateObject var mxManager: MXManager
     @StateObject var uvManager: UVManager
+    @StateObject var mapManager: MapManager
     var body: some View {
         ZStack{
             Color(mxManager.backgroundColor)
@@ -29,7 +30,7 @@ struct UserScreen: View {
                         .foregroundStyle(Color.white)
                 }
                 else if uvManager.ifRequest{
-                    Text("Request goes here")
+                    RequestView(mxManager: mxManager, mapManager: mapManager)
                         .foregroundStyle(Color.white)
                 }
                 else if uvManager.ifMessages{
@@ -121,5 +122,5 @@ struct UserScreen: View {
 
 #Preview {
     UserScreen(mxManager: MXManager(),
-                uvManager: UVManager())
+                uvManager: UVManager(), mapManager: MapManager())
 }
