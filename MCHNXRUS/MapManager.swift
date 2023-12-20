@@ -20,7 +20,7 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate{
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last?.coordinate {
             userLocation = location
-            region = MKCoordinateRegion(center: location, latitudinalMeters: 500, longitudinalMeters: 500)
+            region = MKCoordinateRegion(center: location, latitudinalMeters: 800, longitudinalMeters: 800)
         }
     }
     
@@ -36,7 +36,7 @@ class MapManager: NSObject, ObservableObject, CLLocationManagerDelegate{
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         if let userLocation = userLocation{
-            region = MKCoordinateRegion(center: userLocation, latitudinalMeters: 500, longitudinalMeters: 500)
+            region = MKCoordinateRegion(center: userLocation, latitudinalMeters: 800, longitudinalMeters: 800)
         }
     }
     

@@ -31,13 +31,17 @@ struct UserAccountView: View {
                         .bold()
                         .foregroundColor(.white)
                 }
-                Text(mxManager.curUser.email ?? "no email")
-                    .padding()
-                    .foregroundColor(.white)
-                    .bold()
-                Text(mxManager.curUser.phoneNumber ?? "no phone")
-                    .foregroundColor(.white)
-                    .bold()
+                if let email = mxManager.curUser.email{
+                    Text(email)
+                        .padding()
+                        .foregroundColor(.white)
+                        .bold()
+                }
+                if let phoneNum = mxManager.curUser.phoneNumber{
+                    Text(phoneNum)
+                        .foregroundColor(.white)
+                        .bold()
+                }
                 ZStack{
                     Circle()
                         .fill(Color.black)
@@ -63,6 +67,15 @@ struct UserAccountView: View {
                         
                     }
                 }
+                if(mxManager.curUser.userType == 2){
+                    Toggle("Online", isOn: $mxManager.isReady)
+                        .onChange(of: mxManager.isReady){
+                            mxManager.updateStatus()
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+        
                 Spacer()
                 Button(action:{
                     mxManager.signOutUser()
@@ -70,6 +83,9 @@ struct UserAccountView: View {
                     .padding()
                     .foregroundStyle(mxManager.buttonColor)
             }
+        }
+        .onAppear(){
+            mxManager.updateYoSelf()
         }
     }
 }

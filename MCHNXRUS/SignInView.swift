@@ -12,6 +12,9 @@ struct SignInView: View {
     @State var email = ""
     @State var password = ""
     @State var signedIn = false
+    let userDefault = UserDefaults.standard
+    let launchedBefore = UserDefaults.standard.bool(forKey: "usersignedin")
+    
     var body: some View {
         ZStack{
             Color(mxManager.backgroundColor)
@@ -47,9 +50,9 @@ struct SignInView: View {
                     
                     Button(action: {
                         mxManager.signIn(email: email, password: password)
-                    }){ Text("Log in").foregroundStyle(Color.white)}
+                    }){ 
+                        Text("Log in").foregroundStyle(Color.white)}
                         .padding()
-        
                         .frame(maxWidth: .infinity)
                         .background(RoundedRectangle(cornerRadius: 15)
                             .foregroundColor(mxManager.buttonColor)
@@ -90,7 +93,7 @@ struct SignInView: View {
                     .padding()
                     .frame(maxWidth: .infinity)
                     .background(RoundedRectangle(cornerRadius: 15))
-                        .foregroundColor(mxManager.buttonColor)
+                    .foregroundColor(mxManager.buttonColor)
                     
                     
                 }// end of hstack
@@ -111,6 +114,11 @@ struct SignInView: View {
                 .padding()
             }
             .padding()
+            .onAppear(){
+                Task{
+                    await mxManager.checkUserAuth()
+                }
+            }
         }
     }
 }

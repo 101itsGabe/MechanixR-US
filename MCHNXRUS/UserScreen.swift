@@ -30,8 +30,13 @@ struct UserScreen: View {
                         .foregroundStyle(Color.white)
                 }
                 else if uvManager.ifRequest{
-                    RequestView(mxManager: mxManager, mapManager: mapManager)
-                        .foregroundStyle(Color.white)
+                    if(mxManager.curUser.userType == 1){
+                        RequestView(mxManager: mxManager, mapManager: mapManager)
+                            .foregroundStyle(Color.white)
+                    }
+                    else{
+                        MechanicRequestView(mxManager: mxManager)
+                    }
                 }
                 else if uvManager.ifMessages{
                     Text("Messages goes here")

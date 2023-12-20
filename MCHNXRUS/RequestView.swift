@@ -39,22 +39,34 @@ struct RequestView: View {
                 .ignoresSafeArea(.all)
             VStack{
                 MapView(userLocation: mapManager.userLocation, mapManager: mapManager)
-                    .padding(30)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
                     .background(mxManager.backgroundColor)
-                TextField("", text:
-                            $address)
-                    .foregroundStyle(Color.white)
-                          
-                .background(RoundedRectangle(cornerRadius: 10)
-                    .stroke(lineWidth: 2)
-                    .foregroundColor(.black)
-                    .frame(minHeight: 30)
-                ).foregroundStyle(Color.white)
-                    .padding(20)
+                    .ignoresSafeArea(.all)
+
+                if let addy = mapManager.curAddress{
+                    TextField(address, text: $address)
+                        .onAppear(){
+                            address = addy
+                        }
+                        .onChange(of: address, {
+                            mapManager.curAddress = address
+                        })
+                        .padding()
+                        .foregroundStyle(Color.white)
+                        .background(RoundedRectangle(cornerRadius: 15)
+                            .stroke(lineWidth: 4)
+                            .foregroundColor(.black)
+                            .frame(minHeight: 30)
+                        ).foregroundStyle(Color.white)
+                            .padding(20)
+                }
                 Button(action:{
                     mxManager.signedInScreen = false
                     mxManager.requestScreen = true
+                    
+                    if address != mapManager.curAddress || !address.isEmpty{
+                        mapManager.curAddress = address
+                        mxManager.curUser.curAddress = address
+                    }
                 })
                 {
                     Text("Get Me a Mechanic")
@@ -68,7 +80,14 @@ struct RequestView: View {
             .onAppear(){
                 mapManager.getLocation()
                 mapManager.getAddress()
-                address = mapManager.curAddress ?? ""
+                if let addy = mapManager.curAddress
+                {
+                    address = addy
+                }
+                else
+                {
+                    address = ""
+                }
             }
         }
     }

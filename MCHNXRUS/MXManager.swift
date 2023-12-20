@@ -24,21 +24,44 @@ struct MyUser{
     var imageURL: URL?
     var userLocation: CLLocation?
     var userType: Int?
+    var curAddress: String?
+}
+
+struct MyRequest: Hashable {
+    var email: String?
+    var curAddress: String?
+    var carMake: String?
+    var carModel: String?
+    var issue: String?
+    var timestamp: Timestamp?
     
+    func toReadableTime() -> String{
+        var readableTime = ""
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM d, yyyy h:mm:ss a"
+        if let timestamp = timestamp{
+            readableTime = dateFormatter.string(from: timestamp.dateValue())
+        }
+        return readableTime
+    }
 }
 
 class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-    @Published var helpOptions = ["Suspensions", "Brakes", "Engine", "Chassi", "Interior", "Lights", "Electronics","Audio"]
+    @Published var helpOptions = ["Suspensions", "Brakes", "Engine", "Chassi", "Interior", "Lights", "Electronics","Audio", "Tires", "Other"]
     @Published var loginScreen = true
     @Published var signedInScreen = false
     @Published var signUpScreen = false
     @Published var requestScreen = false
+    @Published var carInfoScreen = false
     @Published var database = Firestore.firestore()
     @Published var curUser = MyUser()
     @Published var backgroundColor = Color(red: 35/255, green: 42/255, blue: 47/255)
     @Published var buttonColor = Color(red: 240/255, green: 100/255, blue: 75/255)
     @Published var isInFirebase = false
-
+    @Published var isReady = false
+    @Published var hasBeenUpdated = false
+    @Published var selectedRequest = 0
+    
     
     func performGoogleSignin() async -> Bool {
         enum SignInError: Error {
@@ -69,13 +92,15 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 //var firebaseUser: User?
                 //print(firebaseUser.email ?? "did not get an email")
                 
-                  let firebaseUser = result.user
+                let firebaseUser = result.user
                 if firebaseUser != nil{
                     //curUser = firebaseUser
                     
+                    DispatchQueue.main.async {
                         self.curUser.email = firebaseUser.email ?? ""
                         self.curUser.phoneNumber = firebaseUser.phoneNumber ?? ""
-
+                    }
+                    
                     if let photoURL = firebaseUser.photoURL{
                         curUser.imageURL = photoURL
                     }
@@ -135,7 +160,7 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func createNewUser(email: String, password: String, phoneNum: String) async throws{
         do{
-            Auth.auth().createUser(withEmail: email, password: password){ authResult, error in
+            Auth.auth().createUser(withEmail: email.lowercased(), password: password){ authResult, error in
                 if let error = error{
                     print("Error inside Auth: \(error.localizedDescription)")
                 }
@@ -148,19 +173,19 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             }
         }
         catch{
-           throw error
+            throw error
         }
     }
     
     
-
-
+    
+    
     
     func addUserToDatabase(user: User){
         let userCollection = database.collection("Users")
         userCollection.getDocuments { snapshot, error in
             userCollection.addDocument(data: [
-                "email": user.email ?? "",
+                "email": user.email?.lowercased() ?? "",
                 "phoneNum": user.phoneNumber ?? ""
             ]){ error in
                 if let error = error {
@@ -175,9 +200,10 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         let userCollection = database.collection("Users")
         userCollection.getDocuments { snapshot, error in
             userCollection.addDocument(data: [
-                "email": email,
+                "email": email.lowercased(),
                 "phoneNumber": phoneNumber,
-                "userType": userType
+                "userType": userType,
+                "isReady": false
             ]){ error in
                 if let error = error {
                     print(error.localizedDescription + "Error adding user")
@@ -190,11 +216,12 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         database = Firestore.firestore()
         let userCollection = database.collection("Users")
         print("GETUSER")
+        print("Email in getuser: \(email)")
         do{
-            let querySnapshot = try await userCollection.whereField("email", isEqualTo: email).getDocuments()
+            let querySnapshot = try await userCollection.whereField("email", isEqualTo: email.lowercased()).getDocuments()
             
             if !querySnapshot.isEmpty{
-                    print("User is already in databse")
+                print("User is already in databse")
                 for document in querySnapshot.documents{
                     let data = document.data()
                     self.isInFirebase = true
@@ -208,16 +235,16 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 
             }
             else{
-                    print("GetUser from database USER IS NOT IN")
+                print("GetUser from database USER IS NOT IN")
                 DispatchQueue.main.async {
                     // Update UI here
                     self.isInFirebase = false
                     // Or any other UI-related changes
                 }
-                    self.isInFirebase = false
-                }
+                self.isInFirebase = false
+            }
         }
-            //Just return the string
+        //Just return the string
         catch{
             print("There was an error")
         }
@@ -226,7 +253,7 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func getPhoneNumber(email: String){
         let userCollection = database.collection("Users")
-        userCollection.whereField("email", isEqualTo: email).getDocuments{ (snapshot, error) in
+        userCollection.whereField("email", isEqualTo: email.lowercased()).getDocuments{ (snapshot, error) in
             if let error = error{
                 print(error.localizedDescription)
             }
@@ -234,11 +261,32 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 for document in snapshot.documents {
                     let data = document.data()
                     if let phoneNumber = data["phoneNumber"] as? String {
-                                    // Use the phoneNumber
+                        // Use the phoneNumber
                         self.curUser.phoneNumber = phoneNumber
-                                } else {
-                                    print("Phone number not found or nil")
-                                }
+                        print("Phone#: \(phoneNumber)")
+                    } else {
+                        print("Phone number not found or nil")
+                    }
+                }
+            }
+        }
+    }
+    
+    func getUserType(email: String){
+        let userCollection = database.collection("Users")
+        userCollection.whereField("email", isEqualTo: email.lowercased()).getDocuments{ (snapshot, error) in
+            if let error = error{
+                print(error.localizedDescription)
+            }
+            if let snapshot = snapshot{
+                for document in snapshot.documents {
+                    let data = document.data()
+                    if let userType = data["userType"] as? Int {
+                        // Use the phoneNumber
+                        self.curUser.userType = userType
+                    } else {
+                        print("Phone number not found or nil")
+                    }
                 }
             }
         }
@@ -246,7 +294,8 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     
     func signIn(email: String, password: String){
-        Auth.auth().signIn(withEmail: email, password: password){ authUser, error in
+        
+        Auth.auth().signIn(withEmail: email.lowercased(), password: password){ authUser, error in
             if let error = error{
                 print("Error with sign in: \(error.localizedDescription)")
             }
@@ -254,10 +303,9 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 self.loginScreen = false
                 self.signedInScreen = true
                 self.curUser.email = authUser.user.email?.description ?? ""
-                //print("inside sign in: \(authUser.user.email?.description ?? "no email from auth")")
-                //print("curUser email: \(self.curUser.email?.description)")
                 if let email = self.curUser.email{
                     self.getPhoneNumber(email: email)
+                    self.getUserType(email: email)
                 }
                 
                 print("signIn Succsefful")
@@ -274,7 +322,185 @@ class MXManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         self.signedInScreen = false
         self.signUpScreen = false
         self.isInFirebase = false
+        do{
+            try Auth.auth().signOut()
+        }
+        catch{
+            print("Something went wrong signing out user")
+        }
         
+    }
+    
+    func checkUserAuth() async{
+        if let currentUser = Auth.auth().currentUser{
+            DispatchQueue.main.async {
+                self.signedInScreen = true
+                self.loginScreen = false
+                self.curUser.email = currentUser.email
+                self.getPhoneNumber(email: currentUser.email ?? "")
+                //curUser.phoneNumber = currentUser.phoneNumber ?? ""
+                self.curUser.imageURL = currentUser.photoURL ?? nil
+                self.getUserType(email: currentUser.email ?? "none")
+            }
+        }
+        else{
+            self.loginScreen = true
+            self.signedInScreen = false
+        }
+    }
+    
+    //Updates a contractors status
+    func updateStatus(){
+        database = Firestore.firestore()
+        let userCollection = database.collection("Users")
+        if let email = curUser.email?.lowercased() {
+            userCollection.whereField("email", isEqualTo: email).getDocuments { (querySnapshot, error) in
+                
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+                else if let snapshot = querySnapshot{
+                    for document in snapshot.documents {
+                        if(self.isReady){
+                            userCollection.document(document.documentID).updateData(["isReady" : true]){ error in
+                                if let error = error{
+                                    print(error.localizedDescription)
+                                }
+                                else{
+                                    print("Update was successful")
+                                }
+                                
+                            }
+                        }
+                        else{
+                            userCollection.document(document.documentID).updateData(["isReady" : false]){ error in
+                                if let error = error{
+                                    print(error.localizedDescription)
+                                }
+                                else{
+                                    print("Update was successful")
+                                }
+                                
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+        
+    }
+    
+    func getContractors(completion: @escaping ([String]) -> Void){
+        database = Firestore.firestore()
+        let userCollection = database.collection("Users")
+        userCollection.whereField("isReady", isEqualTo: true).getDocuments { (querySnapshot, error) in
+            if let error = error{
+                print(error.localizedDescription)
+                completion([])
+            }
+            else if let snapshot = querySnapshot{
+                var usersList: [String] = []
+                for document in snapshot.documents {
+                    if let email = document.data()["email"] as? String {
+                        usersList.append(email)
+                    }
+                }
+                
+                completion(usersList)
+            }
+        }
+    }
+
+    
+    func updateYoSelf(){
+        if hasBeenUpdated == false{
+            if let email = curUser.email?.lowercased(){
+                self.getUserType(email: email)
+                self.getPhoneNumber(email: email)
+            }
+            hasBeenUpdated = true
+        }
+    }
+    
+    
+    func sendRequest(list: [String]){
+        database = Firestore.firestore()
+        let requestsCollection = database.collection("Requests")
+        requestsCollection.getDocuments { snapshot, error in
+            
+            if let error = error{
+                print(error.localizedDescription)
+                print("ERROR IN REQESTS")
+            }
+            
+            requestsCollection.addDocument(data: [
+                    "CarMake": list[0],
+                    "CarMilage": list[1],
+                    "CarModel": list[2],
+                    "CarYear": list[3],
+                    "CarVIN": list[4],
+                    "Explain": list[5],
+                    "Category": self.helpOptions[self.selectedRequest],
+                    "email": self.curUser.email ?? "",
+                    "address": self.curUser.curAddress ?? "",
+                    "timestamp": FieldValue.serverTimestamp()
+                ])
+        }
+    }
+    
+    func getRequests(completion: @escaping ([MyRequest]) -> Void){
+        database = Firestore.firestore()
+        let userCollection = database.collection("Requests")
+        userCollection.getDocuments { (querySnapshot, error) in
+            if let error = error{
+                print("error in requests")
+                print(error.localizedDescription)
+                completion([])
+            }
+            else if let snapshot = querySnapshot{
+                print("inside snapshot reqests")
+                var requestsList: [MyRequest] = []
+                for document in snapshot.documents {
+                    print("inside docs")
+                    var curRequest = MyRequest()
+                    let data = document.data()
+                    if data != nil{
+                        if let email = data["email"] as? String{
+                            curRequest.email = email
+                        }
+                    }
+                    else{
+                        print("NIL")
+                    }
+                    if let email = document.data()["email"] as? String {
+                        curRequest.email = email
+                    }
+                    if let address = document.data()["address"] as? String{
+                        curRequest.curAddress = address
+                    }
+                    if let carMake = document.data()["CarMake"] as? String{
+                        curRequest.carMake = carMake
+                    }
+                    
+                    if let carModel = document.data()["CarModel"] as? String{
+                        curRequest.carModel = carModel
+                    }
+                    
+                    if let issue = document.data()["Explain"] as? String{
+                        curRequest.issue = issue
+                    }
+                    
+                    if let timestamp = document.data()["timestamp"] as? Timestamp{
+                        curRequest.timestamp = timestamp
+                    }
+                    
+                    requestsList.append(curRequest)
+                }
+                
+                completion(requestsList)
+            }
+        }
     }
 }
 

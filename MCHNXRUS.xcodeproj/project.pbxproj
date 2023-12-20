@@ -10,6 +10,8 @@
 		BA0AA9602B1D93A0007B1CED /* RequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0AA95F2B1D93A0007B1CED /* RequestView.swift */; };
 		BA0AA96C2B1E6B98007B1CED /* MapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0AA96B2B1E6B98007B1CED /* MapManager.swift */; };
 		BA0AA96E2B1FA5C7007B1CED /* RequestFullView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0AA96D2B1FA5C7007B1CED /* RequestFullView.swift */; };
+		BA50F8472B2BAD480052B0E1 /* CarDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA50F8462B2BAD480052B0E1 /* CarDataView.swift */; };
+		BA571D1F2B3234DA004B9F04 /* MechanicRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA571D1E2B3234DA004B9F04 /* MechanicRequestView.swift */; };
 		BA8205092B126FF00053E6ED /* MCHNXRUSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA8205082B126FF00053E6ED /* MCHNXRUSApp.swift */; };
 		BA82050B2B126FF00053E6ED /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA82050A2B126FF00053E6ED /* ContentView.swift */; };
 		BA82050D2B126FF10053E6ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BA82050C2B126FF10053E6ED /* Assets.xcassets */; };
@@ -64,6 +66,8 @@
 		BA0AA95F2B1D93A0007B1CED /* RequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestView.swift; sourceTree = "<group>"; };
 		BA0AA96B2B1E6B98007B1CED /* MapManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapManager.swift; sourceTree = "<group>"; };
 		BA0AA96D2B1FA5C7007B1CED /* RequestFullView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestFullView.swift; sourceTree = "<group>"; };
+		BA50F8462B2BAD480052B0E1 /* CarDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarDataView.swift; sourceTree = "<group>"; };
+		BA571D1E2B3234DA004B9F04 /* MechanicRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MechanicRequestView.swift; sourceTree = "<group>"; };
 		BA8205052B126FF00053E6ED /* MCHNXRUS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MCHNXRUS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA8205082B126FF00053E6ED /* MCHNXRUSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCHNXRUSApp.swift; sourceTree = "<group>"; };
 		BA82050A2B126FF00053E6ED /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -164,6 +168,8 @@
 				BA0AA95F2B1D93A0007B1CED /* RequestView.swift */,
 				BA0AA96B2B1E6B98007B1CED /* MapManager.swift */,
 				BA0AA96D2B1FA5C7007B1CED /* RequestFullView.swift */,
+				BA50F8462B2BAD480052B0E1 /* CarDataView.swift */,
+				BA571D1E2B3234DA004B9F04 /* MechanicRequestView.swift */,
 			);
 			path = MCHNXRUS;
 			sourceTree = "<group>";
@@ -355,11 +361,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA50F8472B2BAD480052B0E1 /* CarDataView.swift in Sources */,
 				BA0AA9602B1D93A0007B1CED /* RequestView.swift in Sources */,
 				BA82050B2B126FF00053E6ED /* ContentView.swift in Sources */,
 				BA8205092B126FF00053E6ED /* MCHNXRUSApp.swift in Sources */,
 				BA0AA96E2B1FA5C7007B1CED /* RequestFullView.swift in Sources */,
 				BA8205572B151C040053E6ED /* UserScreen.swift in Sources */,
+				BA571D1F2B3234DA004B9F04 /* MechanicRequestView.swift in Sources */,
 				BAC27EE12B1C437C00918259 /* SearchView.swift in Sources */,
 				BA0AA96C2B1E6B98007B1CED /* MapManager.swift in Sources */,
 				BAC27EDD2B1BCF7400918259 /* UserAccountView.swift in Sources */,
@@ -534,11 +542,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MCHNXRUS/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = NSLocationWhenInUseUsageDescription;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -564,11 +573,12 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MCHNXRUS/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = NSLocationWhenInUseUsageDescription;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

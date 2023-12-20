@@ -25,7 +25,10 @@ struct ContentView: View {
                 SignUpView(mxManager: mxManager)
             }
             else if (mxManager.requestScreen){
-                RequestFullView(mapManager: mapManager, mxManaer: mxManager)
+                RequestFullView(mapManager: mapManager, mxManager: mxManager)
+            }
+            else if(mxManager.carInfoScreen){
+                CarDataView(mxManager: mxManager)
             }
         }
     }
